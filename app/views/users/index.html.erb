@@ -1,0 +1,49 @@
+<% @users.each do |user| %>
+
+<%= user.username %>
+<% friendship = Friendship.can_unfriend?(user.id, current_user.id)%>
+
+    <% if Friendship.can_friend?(user.id, current_user.id)%>
+    <div class="friend-buttons can-friend">
+        <button type="button" class="friend" data-id="<%= user.id %>">Friend Me</button>
+        <button type="button" class="unfriend" data-fId="<%= user.id %>">Unfriend Me</button>
+    </div>
+    <% end %>
+</div>
+<br>
+<% end %>
+<script>
+function toggleFriendButtons(parentDiv) {
+    parentDiv.toggleClass('friend-buttons can-unfriend');
+    parentDiv.toggleClass('friend-buttons can-friend');
+    alert("you toggled a class!");
+}
+
+$('.friend').on("click", function (e) {
+    var currentTarget = $(e.currentTarget);
+    var parentDiv = currentTarget.closest(".friend-buttons");
+
+    // currentTarget.prop("disabled", true);
+    // currentTarget.html("pending...");
+    $.ajax({
+    url: "/users/" + currentTarget.attr('data-id') + "/friendships/",
+    type: "POST",
+    success: toggleFriendButtons(parentDiv)
+    });
+})
+
+
+
+$('.unfriend').on("click", function (e) {
+    var currentTarget = $(e.currentTarget);
+    var parentDiv = currentTarget.closest(".friend-buttons");
+
+    // currentTarget.prop("disabled", true);
+    // currentTarget.html("pending...");
+    $.ajax({
+    url: "/users/" + currentTarget.attr('data-fId') + "/friendships/1",
+    type: "DELETE",
+    success: toggleFriendButtons(parentDiv)
+    });
+})
+</script>

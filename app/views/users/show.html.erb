@@ -1,0 +1,35 @@
+<h1><%= @user.username %></h1>
+
+<h2>Secrets</h2>
+<div id="secrets-list">
+  <% @user.received_secrets.each do |secret| %>
+    <li><%= secret.title %></li>
+  <% end %>
+</div>
+<%= render 'secrets/form', locals: { user: @user, secret: @secret }%>
+<script>
+function injectSecret (secret){
+    var el = $("<li></li>");
+    el.text(secret.title);
+
+    $('#secrets-list').append(el);
+}
+
+
+    $('#secret-form').on('submit', function(event){
+
+        event.preventDefault();
+
+        var formData = $(this).serializeJSON();
+
+        $.ajax({
+            url: "/secrets",
+            type: "POST",
+            data: formData,
+            success: function(response){
+                injectSecret(response);
+            }
+        });
+
+    });
+</script>
